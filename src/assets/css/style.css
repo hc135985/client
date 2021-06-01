@@ -1,0 +1,61 @@
+.wraper {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.content {
+  flex: 1;
+  display: flex;
+}
+.header,
+.footer {
+  height: 60px;
+}
+.footer ul {
+  display: flex;
+  text-align: center;
+  padding-top: 5px;
+}
+.footer ul li {
+  flex: 1;
+  font-size: 14px;
+}
+
+.header-avatar {
+  width: 30px;
+  height: 30px;
+  border-radius: 100%;
+  overflow: hidden;
+}
+
+.slider-wraper {
+  flex: 1;
+  background-color: #dec;
+}
+
+.slider-left {
+  height: 100%;
+  width: 280px;
+  float: left;
+}
+.slider-right {
+  padding-left: 280px;
+}
+
+.avatar-uploader > .ant-upload {
+  width: 128px;
+  height: 128px;
+}
+.avatar {
+  color: #333;
+  text-align: center;
+  line-height: 100px;
+  width: 100px;
+  height: 100px;
+  border: 1px dotted #ccc;
+  background-color: #fff;
+}

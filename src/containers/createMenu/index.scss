@@ -1,0 +1,10 @@
+.create {
+  display: flex;
+  .left, .right {
+    width: 230px;
+    flex-shrink: 0;
+  }
+  .content {
+    flex: 1;
+  }
+}

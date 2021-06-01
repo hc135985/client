@@ -1,0 +1,13 @@
+.login {
+  background: rgb(26, 150, 213);
+  width: 100%;
+  height: 100%;
+  padding-top: 40px;
+}
+.login .ant-form {
+  width: 400px;
+  margin: 0 auto;
+  text-align: center;
+  background: #fff;
+  padding: 20px;
+} 
