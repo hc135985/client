@@ -1,4 +1,3 @@
-import React, { useState } from 'react';
 import { _getMenuList } from '@/api/menu'
 
 let menuList = null;

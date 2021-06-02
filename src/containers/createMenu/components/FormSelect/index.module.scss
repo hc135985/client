@@ -1,0 +1,15 @@
+.select {
+  height: 100%;
+  overflow-y: scroll;
+  font-size: 12px;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+  h3 {
+    text-align: center;
+    margin: 10px 0;
+  }
+  button {
+    margin-bottom: 10px;
+  }
+}

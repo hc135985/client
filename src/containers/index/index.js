@@ -24,6 +24,10 @@ const Index = props => {
         })
     }, [])
 
+    useEffect(() => {
+      setMenuContent(props.content);
+    }, [props.content])
+
     const onChange = item => {
         setMenuCheck([item.path || '/'])
         window.history.replaceState(null, null, `${props?.location?.pathname}#${item.path}`)

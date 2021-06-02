@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react'
-import { Form, Input, Cascader, Button  } from 'antd';
+import { Form, Input, Cascader, Button, message, Tabs } from 'antd';
 import { getMenuList } from '@/containers/hooks'
-import { _addMenu } from '@/api/menu'
+import { _addMenu, _getMenuDetail } from '@/api/menu'
+import FormSelect from '../FormSelect'
 import './index.scss'
 
-const SelectType = ({ menu = {} }) => {
-  const [content, setContent] = useState({})
+const { TabPane } = Tabs;
+
+const SelectType = ({ menu = {}, setFormData, content = {} }) => {
   const [menuList, setMenuList] = useState([])
 
   const gateList = () => {
@@ -19,27 +21,31 @@ const SelectType = ({ menu = {} }) => {
     gateList();
   }, [])
 
-  useEffect(() => {
-    setContent(menu)
-  }, [menu])
+  const { formData = {} } = content;
 
   const createOnFinish = value => {
-    console.log(value, 'value', _addMenu)
     const { parentMenu, menuName: name, path } = value;
-    console.log(parentMenu?.length ? parentMenu[parentMenu.length] : '')
     _addMenu({
       path,
       name,
       parentMenu: parentMenu?.length ? parentMenu[parentMenu.length - 1] : ''
+    }).then(res => {
+        if (res.data.status === 1) {
+        message.success(res.data.message, 1, () => {
+          window.location.reload();
+        })
+      } else {
+        message.error(res.data.message)
+      }
     })
-
   }
 
-  const CreateMenuName = () => {
+  const CreateMenuName = ({ type }) => {
+    const text = type === 'add' ? '创建' : '编辑';
     return (
       <div>
         <h3 className="center">
-          添加菜单
+          {text}菜单
         </h3>
 
         <Form onFinish={createOnFinish}>
@@ -73,7 +79,10 @@ const SelectType = ({ menu = {} }) => {
             </Cascader>
           </Form.Item>
           <Form.Item>
-              <Button type="primary" htmlType="submit">确认创建</Button>
+              <Button type="primary" htmlType="submit">确认{text}</Button>
+              {
+                !!(type === 'update') && <Button type="error">删除</Button>
+              }
           </Form.Item>
         </Form>
       </div>
@@ -82,14 +91,20 @@ const SelectType = ({ menu = {} }) => {
 
   const CreateFrom = () => {
     return (
-      <div>666</div>
+      <Tabs defaultActiveKey="1">
+        <TabPane tab="筛选条件" key="1">
+          <FormSelect formData={formData?.children || []} setFormData={setFormData} />
+        </TabPane>
+        <TabPane tab="表格展示" key="2">2</TabPane>
+        <TabPane tab="编辑菜单" key="3"><CreateMenuName type="update" /></TabPane>
+      </Tabs>
     )
   }
 
   return (
     <div>
       {
-        (content.name && content.path !== '/') ? <CreateFrom/> : <CreateMenuName />
+        content.formData ? <CreateFrom/> : <CreateMenuName type="add" />
       }
     </div>
   )

@@ -4,7 +4,7 @@ const MenuContent = ({ menuContent }) => {
   const [content, setContent] = useState({});
  
   useEffect(() => {
-    console.log(menuContent)
+    console.log(menuContent, 'menuContent:')
   }, [menuContent]) 
 
   return (
