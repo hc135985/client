@@ -7,7 +7,7 @@ import './index.scss'
 
 const { TabPane } = Tabs;
 
-const SelectType = ({ menu = {}, setFormData, content = {} }) => {
+const SelectType = ({ menu, setFormData, content = {}, updateContent }) => {
   const [menuList, setMenuList] = useState([])
 
   const gateList = () => {
@@ -42,6 +42,16 @@ const SelectType = ({ menu = {}, setFormData, content = {} }) => {
 
   const CreateMenuName = ({ type }) => {
     const text = type === 'add' ? '创建' : '编辑';
+    const isEdit = type === 'update';
+    let parentMenu = []
+    if (isEdit && menu.path) {
+      const path = menu.path.slice(0, menu.path.lastIndexOf('/'))
+      path.split('/').forEach((e, i) => {
+        if (i === 0) return;
+        parentMenu.push(i === 1 ? `/${e}` : `${parentMenu[i-2]}/${e}`)
+      })
+    }
+
     return (
       <div>
         <h3 className="center">
@@ -54,14 +64,14 @@ const SelectType = ({ menu = {}, setFormData, content = {} }) => {
             name="menuName"
             rules={[{ required: true, message: '菜单名称不可为空' }]}
           >
-            <Input />
+            <Input value={menu.name || ''} />
           </Form.Item>
           <Form.Item
             label="菜单路径"
             name="path"
             rules={[{ required: true, message: '菜单路径不可为空' }]}
           >
-            <Input />
+            <Input disabled={isEdit} value={menu.path && menu.path.slice(menu.path.lastIndexOf('/') - 1) || ''} />
           </Form.Item>
           <Form.Item
             label="选择父级"
@@ -73,7 +83,9 @@ const SelectType = ({ menu = {}, setFormData, content = {} }) => {
                 label: 'name',
                 value: 'path'
               }}
+              disabled={isEdit}
               changeOnSelect
+              value={parentMenu}
               placeholder="请选择父级，不选为一级"
             >
             </Cascader>
@@ -81,7 +93,7 @@ const SelectType = ({ menu = {}, setFormData, content = {} }) => {
           <Form.Item>
               <Button type="primary" htmlType="submit">确认{text}</Button>
               {
-                !!(type === 'update') && <Button type="error">删除</Button>
+                !!(isEdit) && <Button type="error">删除</Button>
               }
           </Form.Item>
         </Form>
@@ -93,7 +105,7 @@ const SelectType = ({ menu = {}, setFormData, content = {} }) => {
     return (
       <Tabs defaultActiveKey="1">
         <TabPane tab="筛选条件" key="1">
-          <FormSelect formData={formData?.children || []} setFormData={setFormData} />
+          <FormSelect formData={formData?.children || []} setFormData={setFormData} updateContent={updateContent} />
         </TabPane>
         <TabPane tab="表格展示" key="2">2</TabPane>
         <TabPane tab="编辑菜单" key="3"><CreateMenuName type="update" /></TabPane>
@@ -104,7 +116,7 @@ const SelectType = ({ menu = {}, setFormData, content = {} }) => {
   return (
     <div>
       {
-        content.formData ? <CreateFrom/> : <CreateMenuName type="add" />
+        content.id ? <CreateFrom/> : <CreateMenuName type="add" />
       }
     </div>
   )

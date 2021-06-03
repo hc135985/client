@@ -6,7 +6,7 @@ import { Table, Space, Button, Modal, Form, Select, Input } from 'antd'
 const { Option } = Select
 let ind = -1;
 
-const FormSelect = ({ formData = [], setFormData }) => {
+const FormSelect = ({ formData = [], setFormData, updateContent }) => {
   console.log(formData, "formData:")
   const [title, setTitle] = useState('');
   const [modalVisible, setModalVisible] = useState(false)
@@ -19,9 +19,23 @@ const FormSelect = ({ formData = [], setFormData }) => {
     setTableList(formData)
   }, [formData])
 
+  const stringify = str => {
+    let json = "";
+    try {
+      json = JSON.stringify(str);
+    } catch (error) {
+      console.log(error);
+      json = "";
+    }
+    return json;
+  }
+
   useEffect(() => {
     if (FormRef.current && FormRef.current.setFieldsValue) {
-      FormRef.current.setFieldsValue(record);
+      FormRef.current.setFieldsValue({
+        ...record,
+        option: stringify(record.option)
+      });
     }
   }, [record])
 
@@ -43,6 +57,7 @@ const FormSelect = ({ formData = [], setFormData }) => {
       title: '筛选数据',
       dataIndex: 'option',
       key: 'option',
+      render: option => stringify(option),
       width: 200,
     },
     {
@@ -91,6 +106,7 @@ const FormSelect = ({ formData = [], setFormData }) => {
     }
     ind = index;
     setTitle('编辑筛选条件字段')
+    record && record.type && record.type === 'Select' && setFormType('Select')
     setRecord(record);
   }
 
@@ -100,7 +116,18 @@ const FormSelect = ({ formData = [], setFormData }) => {
 
   const onFinish = values => {
     showModal();
-    setFormData && setFormData(values, ind)
+    let option = null;
+    try {
+      const json = values.option ? (values.option[0] === '"' ? values.option : `"${values.option}"`) : '{}'
+      option = JSON.parse(json)
+    } catch (error) {
+      console.log(error)
+      option = {}
+    }
+    setFormData && setFormData({
+      ...values,
+      option
+    }, ind)
     ind = -1;
   }
 
@@ -120,6 +147,7 @@ const FormSelect = ({ formData = [], setFormData }) => {
         pagination={false}
         scroll={{ x: 260 }}
       />
+      <Button type="primary" onClick={updateContent}>保存筛选数据</Button>
       <Modal
         title={title}
         visible={modalVisible}
